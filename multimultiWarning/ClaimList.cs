@@ -95,13 +95,13 @@ namespace multimultiWarning
                     if(claim.mm)
                     {
                         エラーメッセージ = "マルチマルチクレーム";
-                        claim.記載マーキング(WdColor.wdColorLightTurquoise);
+                        claim.記載マーキング(WdColor.wdColorLightYellow);
                     }
                     else
                     if(claim.rmm)
                     {
                         エラーメッセージ = "マルチマルチクレームの引用";
-                        claim.記載マーキング(WdColor.wdColorLightYellow);
+                        claim.記載マーキング(WdColor.wdColorLightTurquoise);
                     }
                     foreach (string エラー in claim.m_エラーメッセージリスト)
                     {
