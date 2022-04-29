@@ -37,9 +37,9 @@ namespace multimultiWarning
         {
             this.tab1 = this.Factory.CreateRibbonTab();
             this.groupMMW = this.Factory.CreateRibbonGroup();
+            this.buttonMultiMulti = this.Factory.CreateRibbonButton();
             this.buttonClear = this.Factory.CreateRibbonButton();
             this.buttonVersion = this.Factory.CreateRibbonButton();
-            this.buttonMultiMulti = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.groupMMW.SuspendLayout();
             this.SuspendLayout();
@@ -59,6 +59,14 @@ namespace multimultiWarning
             this.groupMMW.Label = "請求項";
             this.groupMMW.Name = "groupMMW";
             // 
+            // buttonMultiMulti
+            // 
+            this.buttonMultiMulti.Image = global::multimultiWarning.Properties.Resources.multimulti4;
+            this.buttonMultiMulti.Label = "マルチマルチ警告";
+            this.buttonMultiMulti.Name = "buttonMultiMulti";
+            this.buttonMultiMulti.ShowImage = true;
+            this.buttonMultiMulti.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonMultiMulti_Click);
+            // 
             // buttonClear
             // 
             this.buttonClear.Label = "クリア";
@@ -74,14 +82,6 @@ namespace multimultiWarning
             this.buttonVersion.OfficeImageId = "VersionHistory";
             this.buttonVersion.ShowImage = true;
             this.buttonVersion.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonVersion_Click);
-            // 
-            // buttonMultiMulti
-            // 
-            this.buttonMultiMulti.Image = global::multimultiWarning.Properties.Resources.multimulti4;
-            this.buttonMultiMulti.Label = "マルチマルチ警告";
-            this.buttonMultiMulti.Name = "buttonMultiMulti";
-            this.buttonMultiMulti.ShowImage = true;
-            this.buttonMultiMulti.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.buttonMultiMulti_Click);
             // 
             // RibbonMMW
             // 

@@ -38,13 +38,13 @@ namespace multimultiWarning
         public void addParagraph(MMParagraph aParagraph)
         {
             if ((aParagraph.書類名 == "請求の範囲"
-            || aParagraph.書類名 == "実用新案請求の範囲"
+            || aParagraph.書類名 == "実用新案登録請求の範囲"
             || aParagraph.書類名 == "特許請求の範囲")
             && aParagraph.項目名.Length > 0)
             {
                 if (aParagraph.項目領域 != null)
                 {
-                    Match match = m_rx.Match(aParagraph.項目名);
+                    Match match = m_rx.Match(aParagraph.項目);
                     if (match.Success)
                     {
                         Claim spClaim = new Claim(wDocument, aParagraph.項目領域);
@@ -123,6 +123,11 @@ namespace multimultiWarning
                 if (disposing)
                 {
                     // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                    foreach (Claim claim in this.m_請求項)
+                    {
+                        claim.Dispose();
+                    }
+                    m_請求項.Clear();
                 }
 
                 // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします

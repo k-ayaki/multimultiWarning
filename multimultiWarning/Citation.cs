@@ -15,6 +15,8 @@ namespace multimultiWarning
     {
         private bool disposedValue;
         public string mt { get; set; }
+        public string fr { get; set; }  // 引用部分よりも前
+        public string fr2 { get; set; }  // 引用部分よりも前
         public string rs { get; set; }  // 引用部分テキスト
         public string[] _ref { get; set; }
         public string bk { get; set; }  // 引用部分の後
@@ -27,14 +29,14 @@ namespace multimultiWarning
         public bool mm { get; set; }
         public bool rmm { get; set; }
 
-        public Citation(string a_mt)
+        public Citation(string a_mt, string a_fr)
         {
-            Regex reg0 = new Regex(@"(請求項[0-9][,\/&0-9]*)(.*)", RegexOptions.Compiled);
-
-            Match ma = reg0.Match(a_mt);
+            Match ma = Regex.Match(a_mt, @"(請求項[0-9][,\/&0-9]*)(.*)");
             if (ma.Success == false)
             {
                 mt = "";
+                this.fr = a_fr;
+                this.fr2 = "";
                 this.rs = "";
                 this.bk = "";
                 this.bk20 = "";
@@ -53,6 +55,17 @@ namespace multimultiWarning
                 string ma1 = ma.Groups[1].Value;
                 this.and = false;
                 this.or = false;
+                this.fr = a_fr;
+
+                if(this.fr.Length <= 2)
+                {
+                    this.fr2 = this.fr;
+                }
+                else
+                {
+                    Match mf = Regex.Match(this.fr, @"(.[,\/&]*)?$");
+                    this.fr2 = mf.Groups[1].Value;
+                }
 
                 if (ma1.IndexOf('&') != -1)
                 {
@@ -67,16 +80,17 @@ namespace multimultiWarning
                 ma1 = Regex.Replace(ma1, @"\t+", "\t");
                 this._ref = ma1.Split('\t');
                 this.bk = ma.Groups[2].Value;
-                if(this.bk.IndexOf("請求項") != -1)
+
+                Match mf2 = Regex.Match(this.bk, @"(請求項[0-9]+)");
+                if (mf2.Success)
                 {
-                    this.bk.Substring(0, this.bk.IndexOf("請求項"));
+                    this.bk = this.bk.Substring(0, mf2.Index);
                 }
                 this.ei = false;
                 this.m = false;
                 this.rm = false;
                 this.mm = false;
                 this.rmm = false;
-
                 if (this.bk.Length < 20)
                 {
                     this.bk20 = this.bk;
@@ -89,6 +103,20 @@ namespace multimultiWarning
                 if (this._ref.Length > 1)
                 {
                     this.m = true;
+                }
+                else if(this.fr2.IndexOf('/') != -1)
+                {
+                    this.m = true;
+                    this.or = true;
+                }
+                else if(this.fr2.IndexOf('&') != -1)
+                {
+                    this.and = true;
+                    if(this.bk20.IndexOf('_') != -1)
+                    {
+                        this.m = true;
+                        this.ei = true;
+                    }
                 }
 
                 if (this.and

@@ -100,98 +100,158 @@ namespace multimultiWarning
         {
             return Strings.StrConv(m.Value, VbStrConv.Narrow);
         }
+        private static string ChangeKansuji2Num(Match m)
+        {
+            string kansuji = "〇一二三四五六七八九";
+
+
+            long val0 = 0;
+            long val1 = 0;
+            long val2 = 0;
+            for (int i=0; i<m.Value.Length; i++)
+            {
+                if(kansuji.IndexOf(m.Value[i]) != -1)
+                {
+                    val0 = kansuji.IndexOf(m.Value[i]) + val0*10;
+                }
+                else if(m.Value[i] == '十')
+                {
+                    if (val0 == 0)
+                    {
+                        val1 += 10;
+                    } else {
+                        val1 += val0 * 10;
+                        val0 = 0;
+                    }
+                }
+                else if (m.Value[i] == '百')
+                {
+                    if (val0 == 0)
+                    {
+                        val1 += 100;
+                    } else {
+                        val1 += val0 * 100;
+                        val0 = 0;
+                    }
+                }
+                else if (m.Value[i] == '千')
+                {
+                    if (val0 == 0)
+                    {
+                        val1 += 1000;
+                    } else {
+                        val1 += val0 * 1000;
+                        val0 = 0;
+                    }
+                }
+                else if (m.Value[i] == '万')
+                {
+                    if((val0+val1)==0)
+                    {
+                        val2 += 10000;
+                    } else
+                    {
+                        val2 += (val1 + val0) * 10000;
+                    }
+                    val1 = 0;
+                    val0 = 0;
+                }
+                else if (m.Value[i] == '億')
+                {
+                    if ((val0 + val1) == 0)
+                    {
+                        val2 += 10000 * 10000;
+                    }
+                    else
+                    {
+                        val2 += (val1 + val0) * 10000 * 10000;
+                    }
+                    val1 = 0;
+                    val0 = 0;
+                }
+                else if (m.Value[i] == '兆')
+                {
+                    if ((val0 + val1) == 0)
+                    {
+                        val2 += 10000L * 10000L * 10000L;
+                    }
+                    else
+                    {
+                        val2 += (val1 + val0) * 10000L * 10000L * 10000L;
+                    }
+                    val1 = 0;
+                    val0 = 0;
+                }
+            }
+            val2 += (val1 + val0);
+            return val2.ToString();
+        }
         private static string CheckCitation2(Match m)
         {
             string ret = "";
-            Regex reg0 = new Regex(@"([0-9]+)([,\/&\-]+)?", RegexOptions.Compiled);
-            MatchCollection matches = reg0.Matches(m.Groups[1].Value);
-            string thisNum = "";
-            string thisOp = "";
-            string lastNum = "";
-            string lastOp = "";
-
-            foreach (Match match in matches)
+            int st = int.Parse(m.Groups[2].Value);
+            int ed = int.Parse(m.Groups[3].Value);
+            for (int jj = st; jj <= ed; jj++)
             {
-                lastNum = thisNum;
-                lastOp = thisOp;
-                thisNum = match.Groups[1].Value;
-                thisOp = match.Groups[2].Value;
-                if(lastOp.Length > 0)
+                if (ret.Length > 0)
                 {
-                    ret += lastNum;
-                    if(lastOp.IndexOf('-') != -1)
-                    {
-                        lastOp = "&";
-                        int st = int.Parse(lastNum);
-                        int ed = int.Parse(thisNum);
-                        for (int jj = st + 1; jj < ed; jj++)
-                        {
-                            if (ret.Length > 0)
-                            {
-                                ret += "&";
-                            }
-                            ret += jj.ToString();
-                        }
-                    }
-                    ret += lastOp;
+                    ret += "&";
                 }
+                ret += jj.ToString();
             }
-            if (thisNum.Length > 0)
-            {
-                ret += thisNum;
-            }
-            if (thisOp.Length > 0)
-            {
-                ret += thisOp;
-            }
-            return "請求項" + ret;
+            return m.Groups[1].Value + ret;
         }
         public void 引用部分コード化()
         {
             Regex reg0 = new Regex(@"[Ａ-Ｚａ-ｚ０-９]", RegexOptions.Compiled);
             m_記載2 = reg0.Replace(m_記載, ChangeAnk);
+            Regex reg3 = new Regex(@"[〇一二三四五六七八九十百千万億兆]+", RegexOptions.Compiled);
+            m_記載2 = reg3.Replace(m_記載2, ChangeKansuji2Num);
             m_記載2 = Regex.Replace(m_記載2, @"\s", @"");
             m_記載2 = Regex.Replace(m_記載2, @"[\u30FC\uFF70\uFF0D\u002D\u2212\u301C\uFF5E\u007E\u02DC\u2053]", @"-");
             m_記載2 = Regex.Replace(m_記載2, @"請求([0-9]+)", @"請求項$1");
             m_記載2 = Regex.Replace(m_記載2, @"ないし|乃至|ー|～|－|から|~|より", @"-");
             m_記載2 = Regex.Replace(m_記載2, @"の?(うち|内|中)の?", @"+");
+            m_記載2 = Regex.Replace(m_記載2, @"の?(いずれか?|いづれか?|何れか?|何か|どれか|どちらか|孰れ?か|孰か|少な?くとも|すくなくとも|少な?くても|すくなくても|少な?くも|尠な?くとも|尠な?くても|尠な?くも|すくなくも)", @"_");
             m_記載2 = Regex.Replace(m_記載2, @"叉は|又は|または|叉|又|また|や|か|もしくは|若しくは|あるいは|或いは|或は|或|それとも|亦は|亦", @"/");
             m_記載2 = Regex.Replace(m_記載2, @"、|，|／|・|；|：|？", @",");
             m_記載2 = Regex.Replace(m_記載2, @"及び|および|及|と|ならびに|並びに|並び|並に|並|かつ|且つ|且", @"&");
             m_記載2 = Regex.Replace(m_記載2, @",+", @",");
-            m_記載2 = Regex.Replace(m_記載2, @"(-+|,-+|-+,|,-+,)", @"-");
-            m_記載2 = Regex.Replace(m_記載2, @"(/+|,/+|/+,|,/+,)", @"/");
-            m_記載2 = Regex.Replace(m_記載2, @"(&+|,&+|&+,|,&+,)", @"&");
+            m_記載2 = Regex.Replace(m_記載2, @"(,\-+,|,\-+|\-+,|\-+)", @"-");
+            m_記載2 = Regex.Replace(m_記載2, @"(,\/+,|,\/+|\/+,|\/+)", @"/");
+            m_記載2 = Regex.Replace(m_記載2, @"(,&+,|,&+|&+,|&+)", @"&");
             m_記載2 = Regex.Replace(m_記載2, @"請求の範囲第?([0-9]+)項?", @"請求項$1");
+            m_記載2 = Regex.Replace(m_記載2, @"請求項第?([0-9]+)項?", @"請求項$1");
             m_記載2 = Regex.Replace(m_記載2, @"([,\/&\-])第?([0-9]+)項?", @"$1$2");
-            m_記載2 = Regex.Replace(m_記載2, @"の?(いずれか|いづれか|いずれ|いづれ|何れか|何か|何れ|どれか|どちらか|孰れか|孰か|孰れ|1項|一項|ひとつ)", @"_");
-
-            Regex reg2 = new Regex(@"(請求項[,\/&\-0-9]+)(請求項)([,\/&\-0-9]+)", RegexOptions.Compiled);
-            while(true)
+            m_記載2 = Regex.Replace(m_記載2, @"(?<![項,\/&\-])(1項|一項|ひとつ|一つに|1つに|一つの|1つの)", @"_");
+            m_記載2 = Regex.Replace(m_記載2, @"に?(記載の|記載された)", @"+");
+            string m_記載3;
+            do
             {
-                Match ma = reg2.Match(m_記載2);
-                if(ma.Success == false)
-                {
-                    break;
-                }
-                m_記載2 = Regex.Replace(m_記載2, @"(請求項[,\/&\-0-9]+)(請求項)([,\/&\-0-9]+)", @"$1$3");
-            }
-            Regex reg1 = new Regex(@"請求項([,\/&\-0-9]+)", RegexOptions.Compiled);
-            m_記載2 = reg1.Replace(m_記載2, CheckCitation2);
+                m_記載3 = m_記載2;
+                m_記載2 = Regex.Replace(m_記載2, @"(請求項[0-9\/\-,&]+)請求項([0-9]+)", @"$1$2");
+            } while (m_記載3 != m_記載2);
+
+            do
+            {
+                m_記載3 = m_記載2;
+                Regex reg1 = new Regex(@"(請求項(?:[0-9]+[\/,&]+)*)([0-9]+)[\-]([0-9]+)", RegexOptions.Compiled);
+                m_記載2 = reg1.Replace(m_記載2, CheckCitation2);
+            } while (m_記載3 != m_記載2);
         }
         public void マルチマルチチェック()
         {
+            string fr = "";
             string mt = m_記載2;
 
-            for(;;)
+            for (;;)
             {
-                Citation citation = new Citation(mt);
+                Citation citation = new Citation(mt,fr);
                 if(citation.mt.Length == 0)
                 {
                     break;
                 }
                 citations.Add(citation);
-
                 int cr = this.citations.Count - 1;
 
                 if(citations[cr].and == true && citations[cr].ei == false)
@@ -235,11 +295,11 @@ namespace multimultiWarning
                 this.m |= citations[cr].m;
                 this.rm |= citations[cr].rm;
                 this.rmm |= citations[cr].rmm;
-                citations[cr].mm |= (citations[cr].m & citations[cr].rm);
+                citations[cr].mm = (citations[cr].m & citations[cr].rm);
                 this.mm |= citations[cr].mm;
-                if (this.mm && this.rmm) break;
-
+                //if (this.mm && this.rmm) break;
                 mt = citation.mt;
+                fr = citation.bk;
             }
         }
        
@@ -276,6 +336,12 @@ namespace multimultiWarning
                 if (disposing)
                 {
                     // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                    foreach (MMParagraph paragraph in m_paraList)
+                    {
+                        paragraph.Dispose();
+                    }
+                    m_paraList.Clear();
+                    m_CitationList.Clear();
                 }
 
                 // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします

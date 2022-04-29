@@ -130,7 +130,7 @@ namespace multimultiWarning
                     case "要約書":
                         break;
                     case "特許請求の範囲":
-                    case "実用新案請求の範囲":
+                    case "実用新案登録請求の範囲":
                     case "請求の範囲":
                         請求の範囲2.addParagraph(mmParagraph);
                         break;
@@ -184,6 +184,7 @@ namespace multimultiWarning
                 if (disposing)
                 {
                     // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                    請求の範囲2.Dispose();
                 }
 
                 // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
