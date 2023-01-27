@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32106.194
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "multimultiWarning", "multimultiWarning\multimultiWarning.csproj", "{F992C535-4F95-48B7-8D9A-9A155A053466}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "OfficeAddinSetup", "OfficeAddinSetup\OfficeAddinSetup.vdproj", "{F7DD2197-67A2-463C-80DA-B260C2E6B077}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,8 @@ Global
 		{F992C535-4F95-48B7-8D9A-9A155A053466}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F992C535-4F95-48B7-8D9A-9A155A053466}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F992C535-4F95-48B7-8D9A-9A155A053466}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7DD2197-67A2-463C-80DA-B260C2E6B077}.Debug|Any CPU.ActiveCfg = Debug
+		{F7DD2197-67A2-463C-80DA-B260C2E6B077}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
