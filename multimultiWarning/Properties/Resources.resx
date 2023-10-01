@@ -121,7 +121,7 @@
     <value>弁理士登録番号15532　綾木健一郎</value>
   </data>
   <data name="ModifiedDate" xml:space="preserve">
-    <value>Last Modified 2022/3/16 23:58</value>
+    <value>Last Modified 2023/1/28</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="multimulti4" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -131,6 +131,6 @@
     <value>マルチマルチ警告アドイン</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Ver.1.1.0</value>
+    <value>Ver.1.1.06</value>
   </data>
 </root>
