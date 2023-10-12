@@ -133,7 +133,8 @@ namespace multimultiWarning
                 return null;
             }
             object selS = rng.Characters[idx + 1].Start;
-            object selE = rng.Characters[idx + str.Length].End;
+            System.Globalization.StringInfo si = new System.Globalization.StringInfo(str);
+            object selE = rng.Characters[idx + si.LengthInTextElements].End;
             Range myRng = wDocument.Range(ref selS, ref selE);
             return myRng;
         }
