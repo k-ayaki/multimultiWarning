@@ -7,6 +7,7 @@ using Microsoft.Office.Interop.Word;
 using Microsoft.VisualBasic;
 using Word = Microsoft.Office.Interop.Word;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace multimultiWarning
 {
@@ -61,13 +62,16 @@ namespace multimultiWarning
                     Match w_match = rx.Match(wParagraph.Range.Text.TrimEnd());
                     if (w_match.Success)
                     {
-                        int idx;
-                        idx = w_match.Groups["item"].Index;
+                        //int idx;
+                        //idx = w_match.Groups["item"].Index;
+                        StringInfo sii = new StringInfo(wParagraph.Range.Text.Substring(0, w_match.Groups["item"].Index));
                         項目 = w_match.Groups["item"].Value;
-                        項目領域 = SetText2Rng(wParagraph.Range, idx, 項目);
-                        idx = w_match.Groups["contents"].Index;
+                        項目領域 = SetText2Rng(wParagraph.Range, sii.LengthInTextElements, 項目);
+
+                        //idx = w_match.Groups["contents"].Index;
+                        StringInfo sic = new StringInfo(wParagraph.Range.Text.Substring(0, w_match.Groups["contents"].Index));
                         記載 = w_match.Groups["contents"].Value;
-                        記載領域 = SetText2Rng(wParagraph.Range, idx, 記載);
+                        記載領域 = SetText2Rng(wParagraph.Range, sic.LengthInTextElements, 記載);
 
                         if (項目領域 != null)
                         {
@@ -128,12 +132,12 @@ namespace multimultiWarning
             String str
             )
         {
-            if (str.Length == 0)
+            StringInfo si = new StringInfo(str);
+            if (si.LengthInTextElements == 0)
             {
                 return null;
             }
             object selS = rng.Characters[idx + 1].Start;
-            System.Globalization.StringInfo si = new System.Globalization.StringInfo(str);
             object selE = rng.Characters[idx + si.LengthInTextElements].End;
             Range myRng = wDocument.Range(ref selS, ref selE);
             return myRng;
